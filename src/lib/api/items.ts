@@ -10,18 +10,29 @@ interface CreateItemPayload {
   images: string[];
 }
 
-interface CreateItemResponse {
+interface ApiMessageResponse {
   message: string;
   id?: string;
 }
 
 export async function createItem(
   payload: CreateItemPayload,
-): Promise<{ ok: boolean; data: CreateItemResponse }> {
+): Promise<{ ok: boolean; data: ApiMessageResponse }> {
   const res = await fetch("/api/items", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+  return { ok: res.ok, data };
+}
+
+export async function deleteItem(
+  itemId: string,
+): Promise<{ ok: boolean; data: ApiMessageResponse }> {
+  const res = await fetch(`/api/items/${itemId}`, {
+    method: "DELETE",
   });
 
   const data = await res.json();
