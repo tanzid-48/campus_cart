@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X, ShoppingBag, Heart } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import ProfileDropdown from "./ProfileDropdown";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -84,6 +85,7 @@ export default function Navbar() {
 
           {/* Right side (auth buttons / profile dropdown) */}
           <div className="hidden md:flex items-center gap-4">
+           
             {isPending ? (
               <div className="w-9 h-9 bg-gray-100 rounded-full animate-pulse" />
             ) : isLoggedIn ? (
@@ -98,6 +100,7 @@ export default function Navbar() {
                     }`}
                   />
                 </Link>
+                 <ThemeToggle />
                 <ProfileDropdown
                   userName={userName}
                   userRole={userRole ?? "user"}
@@ -160,6 +163,7 @@ export default function Navbar() {
             )}
 
             <div className="flex flex-col gap-2 pt-2 border-t border-gray-200">
+              <ThemeToggle />
               {isLoggedIn ? (
                 <>
                   <Link
