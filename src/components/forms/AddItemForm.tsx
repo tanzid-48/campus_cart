@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { createItem } from "@/lib/api/items";
 
 const CATEGORIES = [
   "Books",
@@ -63,26 +64,20 @@ export default function AddItemForm() {
 
     setIsLoading(true);
     try {
-      const res = await fetch("/api/items", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: title.trim(),
-          shortDescription: shortDescription.trim(),
-          fullDescription: fullDescription.trim(),
-          price: numericPrice,
-          isNegotiable,
-          category,
-          condition,
-          location: location.trim(),
-          images: imageUrl.trim() ? [imageUrl.trim()] : [],
-        }),
+      const { ok, data } = await createItem({
+        title: title.trim(),
+        shortDescription: shortDescription.trim(),
+        fullDescription: fullDescription.trim(),
+        price: numericPrice,
+        isNegotiable,
+        category,
+        condition,
+        location: location.trim(),
+        images: imageUrl.trim() ? [imageUrl.trim()] : [],
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Could not add the item. Please try again.");
+      if (!ok) {
+        setError(data.message || "Could not add the item. Please try again.");
         setIsLoading(false);
         return;
       }
