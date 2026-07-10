@@ -41,13 +41,13 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-white border-b border-gray-200">
+    <nav className="sticky top-0 z-50 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 font-bold text-xl text-teal-700"
+            className="flex items-center gap-2 font-bold text-xl text-teal-700 dark:text-teal-400"
           >
             <ShoppingBag size={24} />
             CampusCart
@@ -61,8 +61,8 @@ export default function Navbar() {
                 href={link.href}
                 className={`font-medium transition-colors ${
                   isActive(link.href)
-                    ? "text-teal-700"
-                    : "text-gray-700 hover:text-teal-700"
+                    ? "text-teal-700 dark:text-teal-400"
+                    : "text-gray-700 dark:text-gray-300 hover:text-teal-700 dark:hover:text-teal-400"
                 }`}
               >
                 {link.name}
@@ -74,8 +74,8 @@ export default function Navbar() {
                 href="/admin"
                 className={`font-medium transition-colors ${
                   isActive("/admin")
-                    ? "text-amber-700"
-                    : "text-amber-600 hover:text-amber-700"
+                    ? "text-amber-700 dark:text-amber-400"
+                    : "text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400"
                 }`}
               >
                 Admin
@@ -83,11 +83,12 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Right side (auth buttons / profile dropdown) */}
+          {/* Right side (theme toggle + auth buttons / profile dropdown) */}
           <div className="hidden md:flex items-center gap-4">
-           
+            <ThemeToggle />
+
             {isPending ? (
-              <div className="w-9 h-9 bg-gray-100 rounded-full animate-pulse" />
+              <div className="w-9 h-9 bg-gray-100 dark:bg-gray-800 rounded-full animate-pulse" />
             ) : isLoggedIn ? (
               <>
                 <Link href="/wishlist" aria-label="Wishlist">
@@ -96,11 +97,10 @@ export default function Navbar() {
                     className={`transition-colors ${
                       isActive("/wishlist")
                         ? "text-red-500"
-                        : "text-gray-600 hover:text-red-500"
+                        : "text-gray-600 dark:text-gray-400 hover:text-red-500"
                     }`}
                   />
                 </Link>
-                 <ThemeToggle />
                 <ProfileDropdown
                   userName={userName}
                   userRole={userRole ?? "user"}
@@ -110,7 +110,7 @@ export default function Navbar() {
               <>
                 <Link
                   href="/login"
-                  className="px-4 py-2 rounded-lg text-teal-700 font-medium hover:bg-teal-50 transition-colors"
+                  className="px-4 py-2 rounded-lg text-teal-700 dark:text-teal-400 font-medium hover:bg-teal-50 dark:hover:bg-teal-950 transition-colors"
                 >
                   Login
                 </Link>
@@ -124,14 +124,17 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden text-gray-700"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile: theme toggle + menu button */}
+          <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle />
+            <button
+              className="text-gray-700 dark:text-gray-300"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -142,7 +145,9 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={`font-medium py-2 ${
-                  isActive(link.href) ? "text-teal-700" : "text-gray-700"
+                  isActive(link.href)
+                    ? "text-teal-700 dark:text-teal-400"
+                    : "text-gray-700 dark:text-gray-300"
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -154,7 +159,9 @@ export default function Navbar() {
               <Link
                 href="/admin"
                 className={`font-medium py-2 ${
-                  isActive("/admin") ? "text-amber-700" : "text-amber-600"
+                  isActive("/admin")
+                    ? "text-amber-700 dark:text-amber-400"
+                    : "text-amber-600 dark:text-amber-500"
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -162,19 +169,18 @@ export default function Navbar() {
               </Link>
             )}
 
-            <div className="flex flex-col gap-2 pt-2 border-t border-gray-200">
-              <ThemeToggle />
+            <div className="flex flex-col gap-2 pt-2 border-t border-gray-200 dark:border-gray-800">
               {isLoggedIn ? (
                 <>
                   <Link
                     href="/profile"
-                    className="text-gray-700 font-medium py-2"
+                    className="text-gray-700 dark:text-gray-300 font-medium py-2"
                   >
                     Profile
                   </Link>
                   <Link
                     href={userRole === "admin" ? "/admin" : "/items/manage"}
-                    className="text-gray-700 font-medium py-2"
+                    className="text-gray-700 dark:text-gray-300 font-medium py-2"
                   >
                     Dashboard
                   </Link>
@@ -183,7 +189,7 @@ export default function Navbar() {
                 <>
                   <Link
                     href="/login"
-                    className="px-4 py-2 rounded-lg text-teal-700 font-medium text-center border border-teal-700"
+                    className="px-4 py-2 rounded-lg text-teal-700 dark:text-teal-400 font-medium text-center border border-teal-700 dark:border-teal-400"
                   >
                     Login
                   </Link>
