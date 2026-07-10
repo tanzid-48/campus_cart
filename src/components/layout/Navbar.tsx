@@ -3,19 +3,18 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, ShoppingBag, Heart, User } from "lucide-react";
+import { Menu, X, ShoppingBag, Heart } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import ProfileDropdown from "./ProfileDropdown";
 
-interface NavbarProps {
-  isLoggedIn?: boolean;
-  userRole?: "user" | "admin";
-}
-
-export default function Navbar({
-  isLoggedIn = false,
-  userRole = "user",
-}: NavbarProps) {
+export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const pathname = usePathname();
+
+  const { data: session, isPending } = authClient.useSession();
+  const isLoggedIn = !!session?.user;
+  const userRole = session?.user?.role as "user" | "admin" | undefined;
+  const userName = session?.user?.name ?? "";
 
   const loggedOutLinks = [
     { name: "Home", href: "/" },
@@ -83,9 +82,11 @@ export default function Navbar({
             )}
           </div>
 
-          {/* Right side (auth buttons / profile) */}
+          {/* Right side (auth buttons / profile dropdown) */}
           <div className="hidden md:flex items-center gap-4">
-            {isLoggedIn ? (
+            {isPending ? (
+              <div className="w-9 h-9 bg-gray-100 rounded-full animate-pulse" />
+            ) : isLoggedIn ? (
               <>
                 <Link href="/wishlist" aria-label="Wishlist">
                   <Heart
@@ -97,19 +98,10 @@ export default function Navbar({
                     }`}
                   />
                 </Link>
-                <Link href="/profile" aria-label="Profile">
-                  <User
-                    size={20}
-                    className={`transition-colors ${
-                      isActive("/profile")
-                        ? "text-teal-700"
-                        : "text-gray-600 hover:text-teal-700"
-                    }`}
-                  />
-                </Link>
-                <button className="px-4 py-2 rounded-lg bg-teal-700 text-white font-medium hover:bg-teal-800 transition-colors">
-                  Logout
-                </button>
+                <ProfileDropdown
+                  userName={userName}
+                  userRole={userRole ?? "user"}
+                />
               </>
             ) : (
               <>
@@ -169,9 +161,20 @@ export default function Navbar({
 
             <div className="flex flex-col gap-2 pt-2 border-t border-gray-200">
               {isLoggedIn ? (
-                <button className="px-4 py-2 rounded-lg bg-teal-700 text-white font-medium">
-                  Logout
-                </button>
+                <>
+                  <Link
+                    href="/profile"
+                    className="text-gray-700 font-medium py-2"
+                  >
+                    Profile
+                  </Link>
+                  <Link
+                    href={userRole === "admin" ? "/admin" : "/items/manage"}
+                    className="text-gray-700 font-medium py-2"
+                  >
+                    Dashboard
+                  </Link>
+                </>
               ) : (
                 <>
                   <Link
