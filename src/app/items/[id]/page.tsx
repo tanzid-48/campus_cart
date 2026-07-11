@@ -7,6 +7,9 @@ import { MapPin, Star, Calendar, Tag } from "lucide-react";
 import { getDb } from "@/lib/db";
 import ItemCard, { type ItemCardData } from "@/components/items/ItemCard";
 import ContactSellerButton from "@/components/items/ContactSellerButton";
+import ReviewForm from "@/components/items/ReviewForm";
+import ReviewsList, { type ReviewData } from "@/components/items/ReviewsList";
+import { getServerSession } from "@/lib/auth-session";
 
 interface ItemDetailsPageProps {
   params: Promise<{ id: string }>;
@@ -56,15 +59,33 @@ export default async function ItemDetailsPage({
     notFound();
   }
 
+  const session = await getServerSession();
+
   const seller = ObjectId.isValid(item.sellerId)
     ? await db.collection("user").findOne({ _id: new ObjectId(item.sellerId) })
     : null;
 
   const rawReviews = await db
     .collection("reviews")
-    .find({ itemId: item._id })
+    .find({ itemId: item._id.toString() })
     .sort({ createdAt: -1 })
     .toArray();
+
+  const reviews: ReviewData[] = rawReviews.map((r) => ({
+    id: r._id.toString(),
+    reviewerName: r.reviewerName,
+    rating: r.rating,
+    comment: r.comment,
+    createdAt: r.createdAt.toISOString(),
+  }));
+
+  // Who can leave a review: must be logged in, can't review your own
+  // listing, and can't review the same item twice.
+  const alreadyReviewed = session
+    ? rawReviews.some((r) => r.reviewerId === session.user.id)
+    : false;
+  const canReview =
+    !!session && session.user.id !== item.sellerId && !alreadyReviewed;
 
   const relatedDocs = await db
     .collection("items")
@@ -153,12 +174,10 @@ export default async function ItemDetailsPage({
             </span>
           </div>
 
-          {/* Title — pure white/black, boldest element on page */}
           <h1 className="mt-3 text-2xl font-bold text-slate-900 dark:text-white">
             {item.title}
           </h1>
 
-          {/* Price — distinct amber color, clearly different from title */}
           <p className="mt-1 text-2xl font-semibold text-amber-600 dark:text-amber-400">
             ৳{item.price.toLocaleString("en-BD")}
             {item.isNegotiable && (
@@ -168,7 +187,6 @@ export default async function ItemDetailsPage({
             )}
           </p>
 
-          {/* Description */}
           <section className="mt-8">
             <h2 className="text-lg font-semibold text-teal-700 dark:text-teal-400">
               Description
@@ -178,7 +196,6 @@ export default async function ItemDetailsPage({
             </p>
           </section>
 
-          {/* Key information */}
           <section className="mt-8">
             <h2 className="text-lg font-semibold text-teal-700 dark:text-teal-400">
               Key information
@@ -202,43 +219,19 @@ export default async function ItemDetailsPage({
           {/* Reviews */}
           <section className="mt-8">
             <h2 className="text-lg font-semibold text-teal-700 dark:text-teal-400">
-              Reviews ({rawReviews.length})
+              Reviews ({reviews.length})
             </h2>
 
-            {rawReviews.length === 0 ? (
-              <p className="mt-2 text-sm text-slate-500 dark:text-slate-500">
-                No reviews yet for this seller.
-              </p>
-            ) : (
-              <div className="mt-3 flex flex-col gap-4">
-                {rawReviews.map((review) => (
-                  <div
-                    key={review._id.toString()}
-                    className="rounded-lg border border-slate-200 p-4 dark:border-slate-800"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-slate-800 dark:text-slate-200">
-                        {review.reviewerName}
-                      </span>
-                      <div className="flex items-center gap-1">
-                        {Array.from({ length: 5 }, (_, i) => (
-                          <Star
-                            key={i}
-                            size={14}
-                            className={
-                              i < review.rating
-                                ? "fill-amber-400 text-amber-400"
-                                : "text-slate-300 dark:text-slate-700"
-                            }
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                      {review.comment}
-                    </p>
-                  </div>
-                ))}
+            <div className="mt-3">
+              <ReviewsList reviews={reviews} />
+            </div>
+
+            {canReview && (
+              <div className="mt-4">
+                <ReviewForm
+                  itemId={item._id.toString()}
+                  sellerId={item.sellerId}
+                />
               </div>
             )}
           </section>
