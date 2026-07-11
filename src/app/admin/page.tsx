@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { requireAdmin } from "@/lib/auth-session";
 import { getDb } from "@/lib/db";
 import StatsCards from "@/components/admin/StatsCards";
 import CategoryChart from "@/components/admin/CategoryChart";
@@ -9,10 +8,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminDashboardPage() {
-  // Real security check — proxy.ts only handles the quick redirect
-  // before the page loads.
-  await requireAdmin();
-
   const db = await getDb();
 
   const [totalUsers, totalItems, itemsSold, activeListings, categoryAgg] =
@@ -33,7 +28,7 @@ export default async function AdminDashboardPage() {
   }));
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="px-4 py-8 sm:px-6 lg:px-8">
       <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
         Admin dashboard
       </h1>
