@@ -19,12 +19,12 @@ export default function HomePage() {
       <Hero />
       <CategoryShowcase />
       <TrendingListings />
-      <HowItWorks/>
-      <StatsSection/>
-      <Testimonials/>
-      <FAQ/>
-      <Newsletter/>
-      <CTASection/>
+      <HowItWorks />
+      <StatsSection />
+      <Testimonials />
+      <FAQ />
+      <Newsletter />
+      <CTASection />
     </main>
   );
 }
