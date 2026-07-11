@@ -80,7 +80,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="mx-auto w-11/12 px-4 py-10 sm:px-6 lg:px-8">
       <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
         Explore listings
       </h1>
@@ -105,12 +105,24 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
       )}
 
       {totalPages > 1 && (
-        <div className="mt-8 flex justify-center gap-2">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
+          <Link
+            href={buildQuery({ page: Math.max(1, page - 1) })}
+            aria-disabled={page === 1}
+            className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+              page === 1
+                ? "pointer-events-none border-slate-200 text-slate-300 dark:border-slate-800 dark:text-slate-700"
+                : "border-slate-300 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+            }`}
+          >
+            ← Prev
+          </Link>
+
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <Link
               key={p}
               href={buildQuery({ page: p })}
-              className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
+              className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                 p === page
                   ? "bg-teal-700 text-white"
                   : "border border-slate-300 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
@@ -119,6 +131,18 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
               {p}
             </Link>
           ))}
+
+          <Link
+            href={buildQuery({ page: Math.min(totalPages, page + 1) })}
+            aria-disabled={page === totalPages}
+            className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+              page === totalPages
+                ? "pointer-events-none border-slate-200 text-slate-300 dark:border-slate-800 dark:text-slate-700"
+                : "border-slate-300 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+            }`}
+          >
+            Next →
+          </Link>
         </div>
       )}
     </div>

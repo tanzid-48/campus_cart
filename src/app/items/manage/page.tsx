@@ -33,7 +33,7 @@ export default async function ManageItemsPage() {
     category: item.category,
     condition: item.condition,
     status: item.status,
-    createdAt: item.createdAt.toISOString(),
+   createdAt: item.createdAt ? item.createdAt.toISOString() : new Date().toISOString(),
   }));
 
   return (

@@ -23,7 +23,7 @@ const CONDITION_STYLES: Record<ItemCardData["condition"], string> = {
 export default function ItemCard({ item }: { item: ItemCardData }) {
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
-      <div className="relative h-40 w-full bg-slate-100 dark:bg-slate-800">
+      <div className="relative h-44 w-full bg-slate-100 dark:bg-slate-800">
         {item.image ? (
           <Image
             src={item.image}
