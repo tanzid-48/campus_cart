@@ -1,6 +1,6 @@
 import React from 'react';
 
-const page = () => {
+const EditItemForm = () => {
     return (
         <div>
             
@@ -8,4 +8,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default EditItemForm;
