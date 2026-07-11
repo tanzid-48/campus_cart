@@ -50,7 +50,7 @@ export default function ExploreFilters() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       pushParams({ q });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      
     }, 400);
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
