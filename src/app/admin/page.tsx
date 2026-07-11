@@ -3,6 +3,8 @@ import { getDb } from "@/lib/db";
 import StatsCards from "@/components/admin/StatsCards";
 import CategoryChart from "@/components/admin/CategoryChart";
 
+import DashboardHeader from "@/components/admin/DashboardHeader";
+
 export const metadata: Metadata = {
   title: "Admin dashboard — CampusCart",
 };
@@ -29,12 +31,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-        Admin dashboard
-      </h1>
-      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        Platform overview and moderation tools.
-      </p>
+      <DashboardHeader />
 
       <div className="mt-8">
         <StatsCards

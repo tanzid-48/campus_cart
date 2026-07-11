@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import { Users, Package, CheckCircle2, ShoppingBag } from "lucide-react";
 
 interface StatsCardsProps {
@@ -17,10 +20,14 @@ const cards = [
 export default function StatsCards(props: StatsCardsProps) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {cards.map(({ key, label, icon: Icon }) => (
-        <div
+      {cards.map(({ key, label, icon: Icon }, i) => (
+        <motion.div
           key={key}
-          className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: i * 0.08 }}
+          whileHover={{ y: -3 }}
+          className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
         >
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
@@ -33,7 +40,7 @@ export default function StatsCards(props: StatsCardsProps) {
           <p className="mt-3 text-2xl font-bold text-slate-900 dark:text-white">
             {props[key].toLocaleString("en-US")}
           </p>
-        </div>
+        </motion.div>
       ))}
     </div>
   );
