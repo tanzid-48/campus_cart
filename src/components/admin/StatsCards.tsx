@@ -1,7 +1,5 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { Users, Package, CheckCircle2, ShoppingBag } from "lucide-react";
+import { Users, Package, CheckCircle2, TrendingUp } from "lucide-react";
+import FadeInView from "@/components/home/FadeInView";
 
 interface StatsCardsProps {
   totalUsers: number;
@@ -10,38 +8,52 @@ interface StatsCardsProps {
   activeListings: number;
 }
 
-const cards = [
-  { key: "totalUsers", label: "Total users", icon: Users },
-  { key: "totalItems", label: "Total items", icon: Package },
-  { key: "itemsSold", label: "Items sold", icon: CheckCircle2 },
-  { key: "activeListings", label: "Active listings", icon: ShoppingBag },
-] as const;
+export default function StatsCards({ totalUsers, totalItems, itemsSold, activeListings }: StatsCardsProps) {
+  const stats = [
+    {
+      label: "Total Users",
+      value: totalUsers,
+      icon: Users,
+      color: "bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-400",
+    },
+    {
+      label: "Total Listings",
+      value: totalItems,
+      icon: Package,
+      color: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400",
+    },
+    {
+      label: "Items Sold",
+      value: itemsSold,
+      icon: CheckCircle2,
+      color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400",
+    },
+    {
+      label: "Active Listings",
+      value: activeListings,
+      icon: TrendingUp,
+      color: "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-400",
+    },
+  ];
 
-export default function StatsCards(props: StatsCardsProps) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {cards.map(({ key, label, icon: Icon }, i) => (
-        <motion.div
-          key={key}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: i * 0.08 }}
-          whileHover={{ y: -3 }}
-          className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
-        >
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-              {label}
-            </p>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-400">
-              <Icon className="h-4 w-4" />
+      {stats.map((stat, idx) => {
+        const Icon = stat.icon;
+        return (
+          <FadeInView
+            key={stat.label}
+            index={idx}
+            className="rounded-xl border border-slate-200 bg-white p-5 transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
+          >
+            <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${stat.color}`}>
+              <Icon size={20} />
             </div>
-          </div>
-          <p className="mt-3 text-2xl font-bold text-slate-900 dark:text-white">
-            {props[key].toLocaleString("en-US")}
-          </p>
-        </motion.div>
-      ))}
+            <p className="mt-4 text-2xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{stat.label}</p>
+          </FadeInView>
+        );
+      })}
     </div>
   );
 }
