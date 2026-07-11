@@ -38,3 +38,17 @@ export async function deleteItem(
   const data = await res.json();
   return { ok: res.ok, data };
 }
+
+export async function updateItem(
+  itemId: string,
+  payload: Partial<CreateItemPayload> & { status?: string },
+): Promise<{ ok: boolean; data: ApiMessageResponse }> {
+  const res = await fetch(`/api/items/${itemId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+  return { ok: res.ok, data };
+}

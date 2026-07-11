@@ -64,7 +64,7 @@ export default function ManageItemsTable({ items }: ManageItemsTableProps) {
             <th className="px-4 py-3">Price</th>
             <th className="px-4 py-3">Status</th>
             <th className="px-4 py-3">Listed</th>
-            <th className="px-4 py-3 text-right">Actions</th>
+            <th className="px-4 py-3 text-center">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -95,13 +95,19 @@ export default function ManageItemsTable({ items }: ManageItemsTableProps) {
                   year: "numeric",
                 })}
               </td>
-              <td className="px-4 py-3 text-right">
-                <div className="flex justify-end gap-3">
+              <td className="px-4 py-3 text-center">
+                <div className="flex justify-center gap-3">
                   <Link
                     href={`/items/${item.id}`}
                     className="font-medium text-teal-700 hover:underline dark:text-teal-400"
                   >
                     View
+                  </Link>
+                  <Link
+                    href={`/items/edit/${item.id}`}
+                    className="font-medium text-slate-600 hover:underline dark:text-slate-300"
+                  >
+                    Edit
                   </Link>
                   <button
                     onClick={() => openDeleteDialog(item)}
