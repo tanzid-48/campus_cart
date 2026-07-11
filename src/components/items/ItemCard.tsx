@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Star, MapPin } from "lucide-react";
+import WishlistButton from "./WishlistButton";
 
 export interface ItemCardData {
   id: string;
@@ -37,11 +38,14 @@ export default function ItemCard({ item }: { item: ItemCardData }) {
             No image
           </div>
         )}
+
         <span
           className={`absolute top-2 left-2 rounded-full px-2.5 py-1 text-xs font-medium ${CONDITION_STYLES[item.condition]}`}
         >
           {item.condition}
         </span>
+
+        <WishlistButton itemId={item.id} />
       </div>
 
       <div className="flex flex-1 flex-col p-4">
