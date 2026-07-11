@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { getServerSession } from "@/lib/auth-session";
 import { ObjectId } from "mongodb";
+import type { WishlistDocument } from "@/types";
 
 // GET /api/wishlist — get current user's saved items (full item details)
 export async function GET() {
@@ -17,11 +18,13 @@ export async function GET() {
   const db = await getDb();
 
   const wishlistEntries = await db
-    .collection("wishlist")
+    .collection<WishlistDocument>("wishlist")
     .find({ userId: session.user.id })
     .toArray();
 
-  const itemIds = wishlistEntries.map((entry) => new ObjectId(entry.itemId));
+  const itemIds = wishlistEntries
+    .filter((entry) => ObjectId.isValid(entry.itemId))
+    .map((entry) => new ObjectId(entry.itemId));
 
   const items = await db
     .collection("items")
@@ -54,8 +57,7 @@ export async function POST(req: NextRequest) {
 
   const db = await getDb();
 
-  // Avoid duplicate wishlist entries for the same user + item
-  const existing = await db.collection("wishlist").findOne({
+  const existing = await db.collection<WishlistDocument>("wishlist").findOne({
     userId: session.user.id,
     itemId,
   });
@@ -64,11 +66,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, message: "Already in wishlist" });
   }
 
-  await db.collection("wishlist").insertOne({
+  const newEntry: WishlistDocument = {
     userId: session.user.id,
     itemId,
     createdAt: new Date(),
-  });
+  };
+
+  await db.collection<WishlistDocument>("wishlist").insertOne(newEntry);
 
   return NextResponse.json({ success: true, message: "Added to wishlist" });
 }
@@ -96,7 +100,7 @@ export async function DELETE(req: NextRequest) {
 
   const db = await getDb();
 
-  await db.collection("wishlist").deleteOne({
+  await db.collection<WishlistDocument>("wishlist").deleteOne({
     userId: session.user.id,
     itemId,
   });
