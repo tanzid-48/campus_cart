@@ -4,7 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
-import Footer from "@/components/layout/Footer";
+import ConditionalFooter from "@/components/layout/ConditionalFooter";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,7 +47,7 @@ export default function RootLayout({
         <ThemeProvider>
           <Navbar />
           <main className="flex-1">{children}</main>
-          <Footer />
+          <ConditionalFooter/>
           <Toaster position="top-center" richColors />
         </ThemeProvider>
       </body>
