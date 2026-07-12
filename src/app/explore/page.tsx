@@ -28,7 +28,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const sort = params.sort ?? "newest";
   const page = Math.max(1, Number(params.page) || 1);
 
-  const filter: Record<string, unknown> = { status: "Available" };
+  const filter: Record<string, unknown> = {};
   if (q) filter.title = { $regex: q, $options: "i" };
   if (category) filter.category = category;
   if (condition) filter.condition = condition;
@@ -59,6 +59,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
     shortDescription: doc.shortDescription,
     price: doc.price,
     condition: doc.condition,
+    status: doc.status,
     location: doc.location,
     image: doc.images?.[0],
   }));

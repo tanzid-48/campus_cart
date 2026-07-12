@@ -19,6 +19,7 @@ export default async function TrendingListings() {
     shortDescription: doc.shortDescription,
     price: doc.price,
     condition: doc.condition,
+    status: doc.status,
     location: doc.location,
     image: doc.images?.[0],
   }));
