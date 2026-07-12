@@ -15,6 +15,8 @@ export interface AdminItem {
   createdAt: string;
 }
 
+const STATUSES = ["Available", "Reserved", "Sold"];
+
 const STATUS_STYLES: Record<string, string> = {
   Available:
     "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400",
@@ -25,7 +27,27 @@ const STATUS_STYLES: Record<string, string> = {
 export default function AdminListingsTable({ items }: { items: AdminItem[] }) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<AdminItem | null>(null);
+
+  async function handleStatusChange(itemId: string, newStatus: string) {
+    setUpdatingId(itemId);
+    const res = await fetch(`/api/admin/listings/${itemId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus }),
+    });
+    const data = await res.json();
+    setUpdatingId(null);
+
+    if (!res.ok) {
+      toast.error(data.message || "Could not update status.");
+      return;
+    }
+
+    toast.success("Status updated.");
+    router.refresh();
+  }
 
   async function confirmDelete() {
     if (!pendingDelete) return;
@@ -76,13 +98,20 @@ export default function AdminListingsTable({ items }: { items: AdminItem[] }) {
                 ৳{item.price.toLocaleString("en-BD")}
               </td>
               <td className="px-4 py-3">
-                <span
-                  className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                <select
+                  value={item.status}
+                  onChange={(e) => handleStatusChange(item.id, e.target.value)}
+                  disabled={updatingId === item.id}
+                  className={`rounded-full border-0 px-2.5 py-1 text-xs font-medium focus:ring-1 focus:ring-teal-700 disabled:opacity-50 ${
                     STATUS_STYLES[item.status] ?? STATUS_STYLES.Available
                   }`}
                 >
-                  {item.status}
-                </span>
+                  {STATUSES.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
               </td>
               <td className="px-4 py-3 text-center">
                 <button
