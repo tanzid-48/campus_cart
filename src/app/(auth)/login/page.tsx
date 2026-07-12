@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import LoginForm from "@/components/forms/LoginForm";
 
 export const metadata: Metadata = {
-  title: "Login — CampusCart",
+  title: "Log in — CampusCart",
 };
 
 export default function LoginPage() {
-  return <LoginForm />;
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
+  );
 }
