@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ObjectId } from "mongodb";
-import { MapPin, Star, Calendar, Tag } from "lucide-react";
+import { MapPin, Star, Calendar, Tag, ChevronRight } from "lucide-react";
 import { getDb } from "@/lib/db";
 import ItemCard, { type ItemCardData } from "@/components/items/ItemCard";
 import ContactSellerButton from "@/components/items/ContactSellerButton";
@@ -250,15 +250,28 @@ export default async function ItemDetailsPage({
                 {seller?.name?.charAt(0).toUpperCase() ?? "?"}
               </div>
               <div>
-                <p className="font-medium text-slate-900 dark:text-white">
+                <Link
+                  href={`/profile/${item.sellerId}`}
+                  className="group flex items-center gap-1 font-medium text-slate-900 hover:text-teal-700 dark:text-white dark:hover:text-teal-400"
+                >
                   {seller?.name ?? "CampusCart user"}
-                </p>
+                  <ChevronRight
+                    size={14}
+                    className="text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-teal-700 dark:group-hover:text-teal-400"
+                  />
+                </Link>
                 {typeof seller?.rating === "number" && seller.rating > 0 && (
                   <p className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400">
                     <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                     {seller.rating.toFixed(1)}
                   </p>
                 )}
+                <Link
+                  href={`/profile/${item.sellerId}`}
+                  className="mt-0.5 block text-xs text-teal-700 hover:underline dark:text-teal-400"
+                >
+                  View Profile
+                </Link>
               </div>
             </div>
 
