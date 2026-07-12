@@ -89,14 +89,13 @@ export default function LoginForm() {
         <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
         <span className="text-gray-500 text-sm">Or</span>
         <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
-      </div>
-
+      </div>        
       {/* Demo login — auto-fills demo credentials, doesn't submit automatically */}
       <button
         type="button"
         onClick={() => {
-          setEmail("demo.user@campuscart.dev");
-          setPassword("DemoUser123!");
+          setEmail("demoUser@gmail.com");
+          setPassword("DemoUser123");
         }}
         className="w-full mb-4 rounded-lg border border-dashed border-amber-400 bg-amber-50 dark:bg-amber-950/30 px-4 py-2 text-sm font-medium text-amber-700 dark:text-amber-400 transition-colors hover:bg-amber-100 dark:hover:bg-amber-950/50"
       >

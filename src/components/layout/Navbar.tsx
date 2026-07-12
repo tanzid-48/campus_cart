@@ -2,15 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, X, ShoppingBag, Heart } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Menu, X, ShoppingBag, Heart, LogOut } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import ProfileDropdown from "./ProfileDropdown";
 import ThemeToggle from "./ThemeToggle";
+import { toast } from "sonner";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const { data: session, isPending } = authClient.useSession();
   const isLoggedIn = !!session?.user;
@@ -184,6 +186,19 @@ export default function Navbar() {
                   >
                     Dashboard
                   </Link>
+                  <button
+                    onClick={async () => {
+                      setIsMenuOpen(false);
+                      await authClient.signOut();
+                      toast.success("Logged out successfully");
+                      router.push("/");
+                      router.refresh();
+                    }}
+                    className="flex items-center gap-2 py-2 text-left font-medium text-red-600 dark:text-red-400"
+                  >
+                    <LogOut size={18} />
+                    Logout
+                  </button>
                 </>
               ) : (
                 <>
