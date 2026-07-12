@@ -1,25 +1,40 @@
 import type { Metadata } from "next";
+import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/db";
 import AdminListingsTable, {
   type AdminItem,
 } from "@/components/admin/AdminListingsTable";
-import { ObjectId } from "mongodb";
+import Pagination from "@/components/ui/Pagination";
 
 export const metadata: Metadata = {
   title: "All listings — Admin — CampusCart",
 };
 
-export default async function AdminListingsPage() {
+const PAGE_SIZE = 7;
+
+interface AdminListingsPageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function AdminListingsPage({
+  searchParams,
+}: AdminListingsPageProps) {
+  const params = await searchParams;
+  const page = Math.max(1, Number(params.page) || 1);
+
   const db = await getDb();
+
+  const totalCount = await db.collection("items").countDocuments();
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   const rawItems = await db
     .collection("items")
     .find({})
     .sort({ createdAt: -1 })
+    .skip((page - 1) * PAGE_SIZE)
+    .limit(PAGE_SIZE)
     .toArray();
 
-  // Batch-fetch seller names instead of querying the user collection
-  // once per item — one extra round-trip total, not N.
   const sellerIds = [
     ...new Set(rawItems.map((item) => item.sellerId).filter(Boolean)),
   ];
@@ -51,7 +66,7 @@ export default async function AdminListingsPage() {
         All listings
       </h1>
       <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        {items.length} item{items.length !== 1 ? "s" : ""} across the platform.
+        {totalCount} item{totalCount !== 1 ? "s" : ""} across the platform.
       </p>
 
       <div className="mt-6">
@@ -62,7 +77,14 @@ export default async function AdminListingsPage() {
             </p>
           </div>
         ) : (
-          <AdminListingsTable items={items} />
+          <>
+            <AdminListingsTable items={items} />
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              basePath="/admin/listings"
+            />
+          </>
         )}
       </div>
     </div>
