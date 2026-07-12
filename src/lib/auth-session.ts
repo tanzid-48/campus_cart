@@ -1,4 +1,3 @@
-
 import { auth } from "./auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -28,12 +27,12 @@ export async function requireAuth() {
 
 /**
  * Use inside admin-only pages (/admin, /admin/listings, /admin/users).
- * Redirects non-admins to the home page, not just non-logged-in users.
+ 
  */
 export async function requireAdmin() {
   const session = await requireAuth();
   if (session.user.role !== "admin") {
-    redirect("/");
+    redirect("/unauthorized");
   }
   return session;
 }
