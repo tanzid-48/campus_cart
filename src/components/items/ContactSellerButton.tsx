@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter, usePathname } from "next/navigation";
 import { MessageCircle, Mail, Phone } from "lucide-react";
 
 interface ContactSellerButtonProps {
@@ -7,6 +8,7 @@ interface ContactSellerButtonProps {
   sellerPhone?: string;
   sellerEmail?: string;
   itemTitle: string;
+  isLoggedIn: boolean;
 }
 
 export default function ContactSellerButton({
@@ -14,18 +16,30 @@ export default function ContactSellerButton({
   sellerPhone,
   sellerEmail,
   itemTitle,
+  isLoggedIn,
 }: ContactSellerButtonProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const whatsappMessage = encodeURIComponent(
-    `Hi ${sellerName}, I'm interested in your "${itemTitle}" listing on CampusCart.`
+    `Hi ${sellerName}, I'm interested in your "${itemTitle}" listing on CampusCart.`,
   );
+
+  function handleContactClick(e: React.MouseEvent) {
+    if (!isLoggedIn) {
+      e.preventDefault();
+      router.push(`/login?callbackURL=${encodeURIComponent(pathname)}`);
+    }
+  }
 
   return (
     <div className="flex flex-col gap-2">
       {sellerPhone && (
-         <a
+        <a
           href={`https://wa.me/${sellerPhone.replace(/\D/g, "")}?text=${whatsappMessage}`}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={handleContactClick}
           className="flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-green-700"
         >
           <MessageCircle size={18} />
@@ -34,8 +48,9 @@ export default function ContactSellerButton({
       )}
 
       {sellerPhone && (
-          <a
+        <a
           href={`tel:${sellerPhone}`}
+          onClick={handleContactClick}
           className="flex items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
         >
           <Phone size={18} />
@@ -44,8 +59,9 @@ export default function ContactSellerButton({
       )}
 
       {sellerEmail && (
-          <a
+        <a
           href={`mailto:${sellerEmail}?subject=${encodeURIComponent(`Regarding: ${itemTitle}`)}`}
+          onClick={handleContactClick}
           className="flex items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
         >
           <Mail size={18} />

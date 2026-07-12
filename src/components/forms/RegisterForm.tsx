@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
@@ -15,6 +15,9 @@ const RULES = [
 
 export default function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackURL = searchParams.get("callbackURL") || "/";
+
   const [name, setName] = useState("");
   const [university, setUniversity] = useState("");
   const [email, setEmail] = useState("");
@@ -25,13 +28,9 @@ export default function RegisterForm() {
 
   const passedCount = RULES.filter((r) => r.test(password)).length;
 
-  // Added clear handler for Google Login
   const handleGoogleLogin = async () => {
     try {
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/",
-      });
+      await authClient.signIn.social({ provider: "google", callbackURL });
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -41,32 +40,33 @@ export default function RegisterForm() {
     }
   };
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError("");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
 
-  if (passedCount < RULES.length) {
-    return setError("Password does not meet the requirements.");
-  }
+    if (passedCount < RULES.length) {
+      return setError("Password does not meet the requirements.");
+    }
 
-  setIsLoading(true);
-  const { error: signUpError } = await authClient.signUp.email({
-    name,
-    email,
-    password,
-    university,
-  });
-  setIsLoading(false);
+    setIsLoading(true);
+    const { error: signUpError } = await authClient.signUp.email({
+      name,
+      email,
+      password,
+      university,
+    });
+    setIsLoading(false);
 
-  if (signUpError) {
-    return setError(signUpError.message || "Registration failed.");
-  }
+    if (signUpError) {
+      return setError(signUpError.message || "Registration failed.");
+    }
 
-  toast.success("Account created successfully!");
-  router.push("/login");
-};
+    toast.success("Account created successfully!");
+    router.push(
+      `/login${callbackURL !== "/" ? `?callbackURL=${encodeURIComponent(callbackURL)}` : ""}`,
+    );
+  };
 
-  // Helper function to get input classes
   const inputClass =
     "w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600 transition-all";
   const labelClass =
@@ -107,12 +107,12 @@ const handleSubmit = async (e: React.FormEvent) => {
         <span className="font-medium">Continue with Google</span>
       </button>
 
-      {/* Or Divider */}
       <div className="flex items-center gap-2 mb-0">
         <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
         <span className="text-gray-500 text-sm">Or</span>
         <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
       </div>
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
           <label className={labelClass}>Full Name</label>
@@ -203,7 +203,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-6">
         Already have an account?{" "}
         <Link
-          href="/login"
+          href={`/login${callbackURL !== "/" ? `?callbackURL=${encodeURIComponent(callbackURL)}` : ""}`}
           className="text-teal-700 dark:text-teal-400 font-medium hover:underline"
         >
           Login

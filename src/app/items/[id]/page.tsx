@@ -274,6 +274,7 @@ export default async function ItemDetailsPage({
                 sellerPhone={seller?.phone}
                 sellerEmail={seller?.email}
                 itemTitle={item.title}
+                isLoggedIn={!!session}
               />
             </div>
           </div>

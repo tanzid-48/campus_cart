@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
@@ -9,6 +9,9 @@ import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackURL = searchParams.get("callbackURL") || "/";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +19,7 @@ export default function LoginForm() {
 
   const handleGoogleLogin = async () => {
     try {
-      await authClient.signIn.social({ provider: "google", callbackURL: "/" });
+      await authClient.signIn.social({ provider: "google", callbackURL });
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -38,7 +41,8 @@ export default function LoginForm() {
     }
 
     toast.success("Logged in successfully!");
-    router.push("/");
+    router.push(callbackURL);
+    router.refresh();
   };
 
   const inputClass =
@@ -87,6 +91,18 @@ export default function LoginForm() {
         <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
       </div>
 
+      {/* Demo login — auto-fills demo credentials, doesn't submit automatically */}
+      <button
+        type="button"
+        onClick={() => {
+          setEmail("demo.user@campuscart.dev");
+          setPassword("DemoUser123!");
+        }}
+        className="w-full mb-4 rounded-lg border border-dashed border-amber-400 bg-amber-50 dark:bg-amber-950/30 px-4 py-2 text-sm font-medium text-amber-700 dark:text-amber-400 transition-colors hover:bg-amber-100 dark:hover:bg-amber-950/50"
+      >
+        Use demo login
+      </button>
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
           <label className={labelClass}>Email</label>
@@ -133,7 +149,7 @@ export default function LoginForm() {
       <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-6">
         Do not have an account?{" "}
         <Link
-          href="/register"
+          href={`/register${callbackURL !== "/" ? `?callbackURL=${encodeURIComponent(callbackURL)}` : ""}`}
           className="text-teal-700 dark:text-teal-400 font-medium hover:underline"
         >
           Sign up
