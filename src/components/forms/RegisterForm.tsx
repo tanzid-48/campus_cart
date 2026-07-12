@@ -41,29 +41,30 @@ export default function RegisterForm() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError("");
 
-    if (passedCount < RULES.length) {
-      return setError("Password does not meet the requirements.");
-    }
+  if (passedCount < RULES.length) {
+    return setError("Password does not meet the requirements.");
+  }
 
-    setIsLoading(true);
-    const { error: signUpError } = await authClient.signUp.email({
-      name,
-      email,
-      password,
-    });
-    setIsLoading(false);
+  setIsLoading(true);
+  const { error: signUpError } = await authClient.signUp.email({
+    name,
+    email,
+    password,
+    university,
+  });
+  setIsLoading(false);
 
-    if (signUpError) {
-      return setError(signUpError.message || "Registration failed.");
-    }
+  if (signUpError) {
+    return setError(signUpError.message || "Registration failed.");
+  }
 
-    toast.success("Account created successfully!");
-    router.push("/login");
-  };
+  toast.success("Account created successfully!");
+  router.push("/login");
+};
 
   // Helper function to get input classes
   const inputClass =
